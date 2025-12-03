@@ -246,3 +246,4 @@ For setup help or questions:
 ---
 
 **Built with ❤️ for Hackathon 2025 Telcom**
+# checkit
