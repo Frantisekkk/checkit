@@ -1,0 +1,987 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "6129cb38-d880-4def-8b67-40755e8a3f5a",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1072,
+        -320
+      ],
+      "id": "88ef97da-329b-46f1-996a-7e0b7ee46b79",
+      "name": "Webhook",
+      "webhookId": "6129cb38-d880-4def-8b67-40755e8a3f5a"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "71b56363-9bc8-4516-801d-26dea43f61f3",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.error }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "da2ea107-6de8-47b1-8248-e8e8bf0c1b2c",
+      "name": "Check for API Error",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -176,
+        -320
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('HTTP Request').item.json.type }}",
+                    "rightValue": "=image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "fcc62d38-ff38-4fd1-b00b-9ed94a5b7f72"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Is Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "769519f4-0372-45d1-89dc-b030e0f226e1",
+                    "leftValue": "={{ $('HTTP Request').item.json.type }}",
+                    "rightValue": "video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Is Video"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        48,
+        -320
+      ],
+      "id": "fe893385-eeb0-4d64-b5df-546e7fc334d7",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "What's in this image, also if there is text present transcribe it in the original language.",
+        "imageUrls": "=https://scontent.cdninstagram.com/v/t51.82787-15/587547170_18072346901353862_2939555129586956747_n.heic?stp=dst-jpg_e35_tt6&_nc_cat=111&ig_cache_key=Mzc3NjMxOTk5OTgxMzI5MDk3Mw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTgwMC5zZHIuQzMifQ%3D%3D&_nc_ohc=3xMW6iS6-LMQ7kNvwGcvskX&_nc_oc=Admmpa-4IeWVqh7VOs0uH7hgBf1WHZlRVms7dv8-P8jkFZdecwEZ8n7K7AaPHptmzUM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&_nc_gid=S1OdFLatPrpS1eiU2FmaKw&oh=00_Afi54aahpx65WBlu0Y7cVy0phUJESpItn0Ojyx0Rh7CbLw&oe=6931F4D8",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        272,
+        -416
+      ],
+      "id": "234cd003-a325-4ab9-9711-3a71d0007c69",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "X0bce7CGZGJgV8uQ",
+          "name": "IO - OpenAI Tenant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://instagram-downloader-download-instagram-videos-stories1.p.rapidapi.com/get-info-rapidapi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $('Webhook').item.json.body.url }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-host",
+              "value": "instagram-downloader-download-instagram-videos-stories1.p.rapidapi.com"
+            },
+            {
+              "name": "x-rapidapi-key",
+              "value": "xxxxxxxxxxxxxxx"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -400,
+        -320
+      ],
+      "id": "51b970f6-4a05-4ef9-a962-cb1f9af321e5",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0b20b846-e62b-4626-bb1e-63d7d8ca0fbd",
+              "name": "prompt_image",
+              "value": "Based on the image description expand on the topic for the User. (For example if the image is a historical image explain what it is, and expand on that topic)",
+              "type": "string"
+            },
+            {
+              "id": "1357c198-c2c1-469d-b1e8-906d9dec0cfd",
+              "name": "prompt_video",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -624,
+        -128
+      ],
+      "id": "74210e5b-21cd-44c3-8520-c363c19722f0",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0b20b846-e62b-4626-bb1e-63d7d8ca0fbd",
+              "name": "prompt_image",
+              "value": "Analyze whether the content of the Instagram post provided below is legitimate or fake.",
+              "type": "string"
+            },
+            {
+              "id": "1357c198-c2c1-469d-b1e8-906d9dec0cfd",
+              "name": "prompt_video",
+              "value": "Task: Determine whether the described video is real or fabricated. Use web search to evaluate the plausibility of each element and identify whether similar verified events or debunkings exist.  Instructions for the Agent:  Break down the video description into individual claims.  Identify all animals, events, locations, behaviors, or unusual elements.  Separate normal claims from extraordinary or impossible ones.  Evaluate realism using known facts before searching the web. For each claim:  Check whether it is biologically, physically, or historically plausible.  Flag any impossible elements (e.g., dinosaurs in modern times).  Perform web search to verify or debunk the claims. For each claim, look for:  News reports  Fact-checking sites  Viral-hoax reports  Scientific sources  Local reports about the location (e.g., Košice wildlife sightings)  Determine whether similar videos have appeared online.  Look for CGI analyses, deepfake detection, or known viral hoaxes.  Check if screenshots or the exact video description matches known fakes.  Output a structured analysis:  Claim-by-claim realism rating (Real / Plausible / Implausible / Impossible)  Evidence from web search (summaries + citations)  Final verdict: Real, Staged, CGI, Hoax, or Unverified  Confidence score (0–100%)  OUTPUT format: {   \"claims\": [     {       \"claim\": \"string\",       \"realism_rating\": \"Real | Plausible | Implausible | Impossible\",       \"evidence\": \"string\",       \"citations\": [         {           \"title\": \"string\",           \"url\": \"string\"         }       ]     }   ],   \"verdict\": \"Real | Hoax | Mixed | Unverified | CGI\",   \"summary\": \"string\",   \"confidence\": 0 }",
+              "type": "string"
+            },
+            {
+              "id": "6aea9899-0495-471a-af49-41993c826a3d",
+              "name": "final_prompt",
+              "value": "Check hoax",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -624,
+        -512
+      ],
+      "id": "53ce937f-d034-4dbe-b5e2-5ed3555d7593",
+      "name": "Set Hoax Prompt"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0b20b846-e62b-4626-bb1e-63d7d8ca0fbd",
+              "name": "prompt_image",
+              "value": "Explain to the User what the image is about.",
+              "type": "string"
+            },
+            {
+              "id": "1357c198-c2c1-469d-b1e8-906d9dec0cfd",
+              "name": "prompt_video",
+              "value": "Explain to the User what the video is about. Make your response in JSON format, {\"summary\":\"your_summary\"}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -624,
+        -320
+      ],
+      "id": "64550e8d-76b0-4c5b-adbd-e2e20f6f46c2",
+      "name": "Set Information Prompt"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.type }}",
+                    "rightValue": "hoax",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2ecb353a-5c82-4e53-bca1-f9f6ddc1e6af"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hoax"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "26cc24a9-08dd-4c0c-b931-c1310a37f48f",
+                    "leftValue": "={{ $json.body.type }}",
+                    "rightValue": "explain",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "explain"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "317dbebd-a2ab-4a4d-8b20-39b58bcf7ada",
+                    "leftValue": "={{ $json.body.type }}",
+                    "rightValue": "expand",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "expand"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -848,
+        -336
+      ],
+      "id": "4c73d325-2889-489c-9470-1057a88dab0a",
+      "name": "Prompt Switch"
+    },
+    {
+      "parameters": {
+        "url": "=https://scontent.cdninstagram.com/v/t51.82787-15/587547170_18072346901353862_2939555129586956747_n.heic?stp=dst-jpg_e35_tt6&_nc_cat=111&ig_cache_key=Mzc3NjMxOTk5OTgxMzI5MDk3Mw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTgwMC5zZHIuQzMifQ%3D%3D&_nc_ohc=3xMW6iS6-LMQ7kNvwGcvskX&_nc_oc=Admmpa-4IeWVqh7VOs0uH7hgBf1WHZlRVms7dv8-P8jkFZdecwEZ8n7K7AaPHptmzUM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&_nc_gid=S1OdFLatPrpS1eiU2FmaKw&oh=00_Afi54aahpx65WBlu0Y7cVy0phUJESpItn0Ojyx0Rh7CbLw&oe=6931F4D8",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1264,
+        -416
+      ],
+      "id": "4c345bb6-1e0b-40be-b971-60ed0cfadf08",
+      "name": "Get Image"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.sightengine.com/1.0/check.json",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "models",
+              "value": "deepfake"
+            },
+            {
+              "name": "api_user",
+              "value": "1883698682"
+            },
+            {
+              "name": "api_secret",
+              "value": "xxxxxxxxx"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "media",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1552,
+        -416
+      ],
+      "id": "7db90280-92a8-4e0e-a7fb-e698e289c6a3",
+      "name": "Analyse AI Image"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "38f6aaf9-ef41-4dcb-9b5c-3f53e915d0e4",
+              "leftValue": "={{ $json.type.deepfake }}",
+              "rightValue": 0.5,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1776,
+        -416
+      ],
+      "id": "5bcb0a33-12cc-48df-b56e-e38b2e84b7e7",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "videoUrls": "=https://scontent.cdninstagram.com/o1/v/t16/f2/m86/AQNt4NBZZBa6iVmE0PkgGBXAA7TwNtPPTcgFgLGpVZ3cx09NKlSw-MSn6_Zrir6GBwGCCeeXIOGWGGupcS34N3qSiUe-nrzkv5k7SLA.mp4?stp=dst-mp4&efg=eyJxZV9ncm91cHMiOiJbXCJpZ193ZWJfZGVsaXZlcnlfdnRzX290ZlwiXSIsInZlbmNvZGVfdGFnIjoidnRzX3ZvZF91cmxnZW4uY2xpcHMuYzIuNzIwLmJhc2VsaW5lIn0&_nc_cat=103&vs=1589400412437642_1415579049&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC82MDRGNUFGRDQxM0E5NjEzQzE3MTcyRjRCNEU3NDA5MF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HRjZWOWlMQ3otdktiUnRaQUpjeEhKVFJOWTAtYnN0VEFRQUYVAgLIARIAKAAYABsAFQAAJt7umMPd16BAFQIoAkMzLBdAFXbItDlYEBgSZGFzaF9iYXNlbGluZV8xX3YxEQB1%2FgdllqkBAA%3D%3D&ccb=9-4&oh=00_Afij_pJMPQYhP2mzlLllptheXdTMDzn1E_W3n6id7ZUO9g&oe=692D245D&_nc_sid=10d13b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -224
+      ],
+      "id": "3743947e-4bc1-467a-b2fe-9131e44a9cbb",
+      "name": "Analyze Video",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "bT5xETPxMcwgUrkA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Explain to the User what the image is about.\n\nThe image description is:\n{{ $json['0'].content[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        496,
+        -416
+      ],
+      "id": "29d38174-4cfc-4757-8efa-b0b4c194ede9",
+      "name": "Evaluator",
+      "credentials": {
+        "openAiApi": {
+          "id": "X0bce7CGZGJgV8uQ",
+          "name": "IO - OpenAI Tenant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "={{ $('Set Hoax Prompt').item.json.prompt_video }}\n\nInput:\nPost caption:\n\nA video description (example provided below).\n{{ $json.content.parts[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        496,
+        -224
+      ],
+      "id": "3778ac86-42db-4aa4-8fc6-45c78b867962",
+      "name": "Evaluator 1",
+      "credentials": {
+        "openAiApi": {
+          "id": "X0bce7CGZGJgV8uQ",
+          "name": "IO - OpenAI Tenant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Your job is to write a user friendly message regarding the users inquiry. From 3 choices: Check hoax, explain post, expand information regarding the topic, the User chose: 'Shortly explain to the User what the topic and content of the image is about.'\n\nDo not thank the user, begin talking normally like 'The provided image is....' and also do not end with I can help you with something else since this is not a conversation only a single image analysis.\n\nYour response will be passed into a JSON so please when using \" marks make sure to escape them using \\. Or do not use \". Also make your response in markdown format. But mainly use bold effect.\n\nWrite your response in English language.\n\nContext:\n{{ $json.output[0].content[0].text }}\nTitle:\n\n\nImage Description:\n{{ $('Analyze image').item.json['0'].content[0].text }}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        848,
+        -416
+      ],
+      "id": "1aec67f0-1121-414e-ba54-be4d9c927bd0",
+      "name": "Image Summary",
+      "credentials": {
+        "openAiApi": {
+          "id": "X0bce7CGZGJgV8uQ",
+          "name": "IO - OpenAI Tenant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Your job is to write a user friendly message regarding the users inquiry. From 3 choices: Check hoax, explain post, expand information regarding the topic, the User chose: {{ $('Set Hoax Prompt').item.json.final_prompt }}\n\nDo not thank the User for asking/inquiry. Just begin with talking about the video as: 'The video shows...'\n\nYour response will be passed into a JSON so please when using quotation marks escape them. Or do not use \". Also make your response in markdown format. But mainly use bold effect.\n\nWrite the summary in Slovak language. Write a short summary of the video and then explain what is the result.\n\n\nExample response:\n\"Video shows a sighting of a wolf in Kosice, while this might be possible the appearenc of a dinosaur-like creature is a digittaly effect. Making the video a hoax designed for comedic or surreal impact.\"\"\n\nActual Data:\nVerdict:\n{{ $json.verdict }}\n\nSummary:\n{{ $json.summary }}\n\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -224
+      ],
+      "id": "e30f2013-ad6c-4c12-b8b1-c9ef12c0c4ff",
+      "name": "Video Summary",
+      "credentials": {
+        "openAiApi": {
+          "id": "X0bce7CGZGJgV8uQ",
+          "name": "IO - OpenAI Tenant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "96d00dd6-7773-4dc2-8186-c7002e68718b",
+              "name": "deepfake_result",
+              "value": "real",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2000,
+        -512
+      ],
+      "id": "8fa402ab-98c9-4a30-aebb-ab172d1f90a6",
+      "name": "Deepfake Result - Real"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "96d00dd6-7773-4dc2-8186-c7002e68718b",
+              "name": "deepfake_result",
+              "value": "fake",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2000,
+        -320
+      ],
+      "id": "4446ffc8-055e-402a-a9f1-67897b4e50ef",
+      "name": "Deepfake Result - Fake"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"response\": \"{{ $json.output[0].content[0].text }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1552,
+        -224
+      ],
+      "id": "f132b8fb-4ad0-45ab-acdf-446b5edad077",
+      "name": "Response - Video"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"response\": \"{{ $('Image Summary').item.json.output[0].content[0].text }}\"\n  \"deepfake\": \"{{ $json.deepfake_result }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2224,
+        -416
+      ],
+      "id": "987c0f6c-cbbc-4620-8a3c-e463348359f3",
+      "name": "Response - Image"
+    },
+    {
+      "parameters": {
+        "jsCode": "let raw = $input.first().json.output[0].content[0].text;\n\n// Remove markdown code fences if present\nraw = raw.replace(/```json|```/g, \"\").trim();\n\n// If wrapped in quotes (LLM sometimes does this)\nif ((raw.startsWith('\"') && raw.endsWith('\"')) || \n    (raw.startsWith(\"'\") && raw.endsWith(\"'\"))) {\n  raw = JSON.parse(raw); // unescape\n}\n\n// Parse into JSON object\nreturn JSON.parse(raw);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        -224
+      ],
+      "id": "dc25d6c9-238f-4c08-b735-63bd043c002c",
+      "name": "Output Parser"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prompt Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for API Error": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analyze Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Evaluator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Check for API Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Hoax Prompt": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Information Prompt": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompt Switch": {
+      "main": [
+        [
+          {
+            "node": "Set Hoax Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Information Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image": {
+      "main": [
+        [
+          {
+            "node": "Analyse AI Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyse AI Image": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Deepfake Result - Real",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Deepfake Result - Fake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Video": {
+      "main": [
+        [
+          {
+            "node": "Evaluator 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluator": {
+      "main": [
+        [
+          {
+            "node": "Image Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluator 1": {
+      "main": [
+        [
+          {
+            "node": "Output Parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Summary": {
+      "main": [
+        [
+          {
+            "node": "Get Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Summary": {
+      "main": [
+        [
+          {
+            "node": "Response - Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deepfake Result - Real": {
+      "main": [
+        [
+          {
+            "node": "Response - Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deepfake Result - Fake": {
+      "main": [
+        [
+          {
+            "node": "Response - Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Parser": {
+      "main": [
+        [
+          {
+            "node": "Video Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Analyse AI Image": [
+      {
+        "status": "success",
+        "request": {
+          "id": "req_jFtHmEszxmeOR7f9jALiV",
+          "timestamp": 1764489426.110518,
+          "operations": 5
+        },
+        "type": {
+          "deepfake": 0.001
+        },
+        "media": {
+          "id": "med_jFtH88wa7xjHExZD0Ka6j",
+          "uri": "584298873_18508582723070233_5242780662250749547_n.jpg"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6627da851ab32c6b40f215376435e6d9d839e731c8a803c6cb79cb14f94fc75d"
+  }
+}
