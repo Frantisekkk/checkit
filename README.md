@@ -16,6 +16,43 @@ Checkit is an intelligent iOS share extension that provides instant AI-powered a
 
 ---
 
+## 🎥 Demo / Preview
+
+### Quick Preview (GIF - Recommended)
+![Checkit Demo](demo/checkit-demo.gif)
+
+*Add your animated GIF to `demo/checkit-demo.gif` to see it here*
+
+### Full Video Demo
+📹 [Watch Full Demo Video](demo/checkit-demo.mp4)
+
+*Add your MP4 video to `demo/checkit-demo.mp4`*
+
+### External Video (YouTube/Vimeo)
+[![Watch the demo on YouTube](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
+
+*Replace `VIDEO_ID` with your YouTube video ID*
+
+---
+
+### How to Add Your Demo
+
+1. **Record your screen** showing the app in action
+2. **For GIF** (best for quick preview):
+   - Use tools like [GIPHY Capture](https://giphy.com/apps/giphycapture), [Kap](https://getkap.co/), or [LICEcap](https://www.cockos.com/licecap/)
+   - Save as `demo/checkit-demo.gif`
+   - Keep under 5MB for best performance
+3. **For Video** (better quality):
+   - Save as MP4 to `demo/checkit-demo.mp4`
+   - Keep under 25MB for GitHub
+4. **For YouTube**:
+   - Upload to YouTube
+   - Replace `VIDEO_ID` in the link above with your video ID
+
+See `demo/README.md` for more details.
+
+---
+
 ## 🏗️ Project Structure
 
 ```
